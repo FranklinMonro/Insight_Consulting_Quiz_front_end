@@ -14,7 +14,7 @@ export class QuizService {
   constructor(private httpClient: HttpClient) { }
 
   public getQuizes = (): Observable<QuizAttributes[]> => this.httpClient.get<QuizAttributes[]>(
-    `${environment.apiUrl}quizapi/quiz/`,
+    `${environment.apiUrl}quizapi/quizroutes/quiz`,
     { observe: 'response' },
   ).pipe(
     map((res: any) => {
