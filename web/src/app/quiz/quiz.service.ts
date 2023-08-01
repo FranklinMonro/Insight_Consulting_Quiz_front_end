@@ -1,9 +1,28 @@
+/* eslint-disable import/prefer-default-export */
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+
+import environment from '../../enviroments/enviroments';
+import { QuizAttributes } from './quiz.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class QuizService {
+  constructor(private httpClient: HttpClient) { }
 
-  constructor() { }
+  public getQuizes = (): Observable<QuizAttributes[]> => this.httpClient.get<QuizAttributes[]>(
+    `${environment.apiUrl}quizapi/quiz/`,
+    { observe: 'response' },
+  ).pipe(
+    map((res: any) => {
+      if (!res.body) {
+        throw new Error('No response in body');
+      }
+      return res;
+    }),
+    catchError((err: HttpErrorResponse) => { throw new Error(err.message); }),
+  );
 }
