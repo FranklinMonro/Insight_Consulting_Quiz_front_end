@@ -6,8 +6,20 @@
 		*ngFor="let quiz of quizNames"
 		type="button"
 		class="btn btn-outline-secondary me-2"
-		(click)="pickAQuiz(quiz.quiz_id!, 1)"
+		(click)="pickAQuizQuestion(quiz.quiz_id!, 1)"
 	>
 		{{ quiz.quiz_name }}
+	</button>
+</div>
+
+<div class="divElement" *ngIf="pickQuestion">
+	<h1>{{ question }}</h1>
+    <button
+		*ngFor="let answer of questionsAnswers"
+		type="button"
+		class="btn btn-outline-secondary me-2"
+		(click)="pickAQuizQuestion(quizID, quistionNumber + 1)"
+	>
+		{{ answer.answer }}
 	</button>
 </div>
