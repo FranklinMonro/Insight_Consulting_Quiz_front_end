@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
@@ -27,6 +28,7 @@ import { HeaderComponent } from './header/header.component';
     MatToolbarModule,
     ToastrModule.forRoot(),
     NgxSpinnerModule,
+    NgbModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
