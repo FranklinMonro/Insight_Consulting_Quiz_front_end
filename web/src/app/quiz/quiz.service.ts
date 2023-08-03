@@ -5,7 +5,9 @@ import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import environment from '../../enviroments/enviroments';
-import { QuestionsAnswerAttributes, QuizAttributes, QuizQuestionAttributes } from './quiz.interface';
+import {
+  PlayerAnswerAttributes, QuestionsAnswerAttributes, QuizAttributes, QuizQuestionAttributes,
+} from './quiz.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +17,19 @@ export class QuizService {
 
   public getQuizes = (): Observable<QuizAttributes[]> => this.httpClient.get<QuizAttributes[]>(
     `${environment.apiUrl}quizapi/quizroutes/quiz`,
+    { observe: 'response' },
+  ).pipe(
+    map((res: any) => {
+      if (!res.body) {
+        throw new Error('No response in body');
+      }
+      return res;
+    }),
+    catchError((err: HttpErrorResponse) => { throw new Error(err.message); }),
+  );
+
+  public getQuestionCount = (quizid: number): Observable<number> => this.httpClient.get<number>(
+    `${environment.apiUrl}quizapi/quizroutes/quizcount/${quizid}`,
     { observe: 'response' },
   ).pipe(
     map((res: any) => {
@@ -47,6 +62,37 @@ export class QuizService {
     questionid: number,
   ): Observable<QuestionsAnswerAttributes[]> => this.httpClient.get<QuestionsAnswerAttributes[]>(
     `${environment.apiUrl}quizapi/quizroutes/questionanswer/${quizid}/${questionid}`,
+    { observe: 'response' },
+  ).pipe(
+    map((res: any) => {
+      if (!res.body) {
+        throw new Error('No response in body');
+      }
+      return res;
+    }),
+    catchError((err: HttpErrorResponse) => { throw new Error(err.message); }),
+  );
+
+  public postPlayerAnswer = (
+    playerAnswer: PlayerAnswerAttributes,
+  ): Observable<PlayerAnswerAttributes> => this.httpClient.post<PlayerAnswerAttributes>(
+    `${environment.apiUrl}quizapi/answerroutes/`,
+    playerAnswer,
+    { observe: 'response' },
+  ).pipe(
+    map((res: any) => {
+      if (!res.body) {
+        throw new Error('No response in body');
+      }
+      return res;
+    }),
+    catchError((err: HttpErrorResponse) => { throw new Error(err.message); }),
+  );
+
+  public getAllAnswers = (
+    answersID: string[],
+  ): Observable<PlayerAnswerAttributes[]> => this.httpClient.get<string[]>(
+    `${environment.apiUrl}quizapi/answerroutes/${answersID}`,
     { observe: 'response' },
   ).pipe(
     map((res: any) => {

@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { QuizService } from './quiz.service';
-import { QuestionsAnswerAttributes, QuizAttributes } from './quiz.interface';
+import { PlayerAnswerAttributes, QuestionsAnswerAttributes, QuizAttributes } from './quiz.interface';
 
 @Component({
   selector: 'app-quiz',
@@ -21,6 +21,8 @@ export class QuizComponent implements OnInit, OnDestroy {
 
   public quizID: number = 0;
 
+  public questionCount: number = 0;
+
   public quizNames: QuizAttributes[] = [];
 
   public quistionNumber: number = 0;
@@ -30,6 +32,12 @@ export class QuizComponent implements OnInit, OnDestroy {
   public question: string = '';
 
   public questionsAnswers: QuestionsAnswerAttributes[] = [];
+
+  public playerAnswerID: string[] = [];
+
+  public showScore: boolean = false;
+
+  public playerCorrect: number = 0;
 
   constructor(
     private quizService: QuizService,
@@ -49,6 +57,26 @@ export class QuizComponent implements OnInit, OnDestroy {
         this.quizNames = resp.body;
         this.pickQuiz = true;
         this.pickQuestion = false;
+        this.showScore = false;
+      },
+      error: (err: ErrorEvent) => {
+        this.toastr.error(err.message, 'ERROR', {
+          timeOut: 3000,
+        });
+        this.spinner.hide();
+      },
+      complete: () => {
+        this.spinner.hide();
+      },
+    });
+  };
+
+  public getQuizCount = (quizID: number): void => {
+    this.spinner.show();
+    this.subcription = this.quizService.getQuestionCount(quizID).subscribe({
+      next: (resp: any) => {
+        const { count } = resp.body;
+        this.questionCount = count;
       },
       error: (err: ErrorEvent) => {
         this.toastr.error(err.message, 'ERROR', {
@@ -72,6 +100,7 @@ export class QuizComponent implements OnInit, OnDestroy {
         this.questionAnswers(quiz_id, question_id);
         this.pickQuiz = false;
         this.pickQuestion = true;
+        this.showScore = false;
         this.quizID = quizID;
         this.quistionNumber = questionID;
       },
@@ -94,6 +123,7 @@ export class QuizComponent implements OnInit, OnDestroy {
         this.questionsAnswers = resp.body;
         this.pickQuiz = false;
         this.pickQuestion = true;
+        this.showScore = false;
       },
       error: (err: ErrorEvent) => {
         this.toastr.error(err.message, 'ERROR', {
@@ -105,6 +135,56 @@ export class QuizComponent implements OnInit, OnDestroy {
         this.spinner.hide();
       },
     });
+  };
+
+  public playerAnswers = (answer: PlayerAnswerAttributes): void => {
+    this.spinner.show();
+    this.subcription = this.quizService.postPlayerAnswer(answer).subscribe({
+      next: (resp: any) => {
+        const { id } = resp.body;
+        this.playerAnswerID.push(id);
+        if (this.playerAnswerID.length === this.questionCount) {
+          this.allAnswers(this.playerAnswerID);
+        }
+      },
+      error: (err: ErrorEvent) => {
+        this.toastr.error(err.message, 'ERROR', {
+          timeOut: 3000,
+        });
+        this.spinner.hide();
+      },
+      complete: () => {
+        this.spinner.hide();
+      },
+    });
+  };
+
+  public allAnswers = (answersID: string[]): void => {
+    this.spinner.show();
+    this.subcription = this.quizService.getAllAnswers(answersID).subscribe({
+      next: (resp: any) => {
+        const countCorrect = resp.body
+          .map((answ: PlayerAnswerAttributes) => answ.is_correct)
+          .filter((correct: boolean) => correct);
+        this.playerCorrect = countCorrect.length;
+        this.pickQuiz = false;
+        this.pickQuestion = false;
+        this.showScore = true;
+      },
+      error: (err: ErrorEvent) => {
+        this.toastr.error(err.message, 'ERROR', {
+          timeOut: 3000,
+        });
+        this.spinner.hide();
+      },
+      complete: () => {
+        this.spinner.hide();
+      },
+    });
+  };
+
+  public restartQuiz = (): void => {
+    window.location.reload();
   };
 
   ngOnDestroy() {
