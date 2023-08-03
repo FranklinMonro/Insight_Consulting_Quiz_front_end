@@ -63,7 +63,6 @@ export class QuizComponent implements OnInit, OnDestroy {
   };
 
   public pickAQuizQuestion = (quizID: number, questionID: number): void => {
-    console.log('pickAQuizQuestion', quizID, questionID);
     this.spinner.show();
     this.subcription = this.quizService.getQuizQuestion(quizID, questionID).subscribe({
       next: (resp: any) => {
@@ -93,7 +92,6 @@ export class QuizComponent implements OnInit, OnDestroy {
     this.subcription = this.quizService.getQuestionAnswers(quizID, questionID).subscribe({
       next: (resp: any) => {
         this.questionsAnswers = resp.body;
-        console.log(this.questionsAnswers);
         this.pickQuiz = false;
         this.pickQuestion = true;
       },
