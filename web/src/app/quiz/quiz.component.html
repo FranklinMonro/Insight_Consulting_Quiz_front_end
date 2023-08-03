@@ -1,1 +1,13 @@
 <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+<div class="divElement" *ngIf="pickQuiz">
+	<h1>Pick a Quiz</h1>
+    <button
+		*ngFor="let quiz of quizNames"
+		type="button"
+		class="btn btn-outline-secondary me-2"
+		(click)="pickAQuiz(quiz.quiz_id!, 1)"
+	>
+		{{ quiz.quiz_name }}
+	</button>
+</div>

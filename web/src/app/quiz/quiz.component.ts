@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { QuizService } from './quiz.service';
-import { QuizAttributes } from './quiz.interface';
+import { QuizAttributes, QuizQuestionAttributes } from './quiz.interface';
 
 @Component({
   selector: 'app-quiz',
@@ -16,9 +16,17 @@ import { QuizAttributes } from './quiz.interface';
 export class QuizComponent implements OnInit, OnDestroy {
   private subcription: Subscription | undefined;
 
+  public pickQuiz: boolean = false;
+
   public quizNames: QuizAttributes[] = [];
 
   public quistionNumber: number = 1;
+
+  public pickQuestion: boolean = false;
+
+  public question: string = '';
+
+  public quizQuestion: QuizQuestionAttributes = {};
 
   constructor(
     private quizService: QuizService,
@@ -35,7 +43,8 @@ export class QuizComponent implements OnInit, OnDestroy {
     this.subcription = this.quizService.getQuizes().subscribe({
       next: (resp: any) => {
         this.toastr.success('Quiz Names Received', 'SUCCESS');
-        this.quizNames = resp;
+        this.quizNames = resp.body;
+        this.pickQuiz = true;
       },
       error: (err: ErrorEvent) => {
         this.toastr.error(err.message, 'ERROR', {
@@ -47,6 +56,11 @@ export class QuizComponent implements OnInit, OnDestroy {
         this.spinner.hide();
       },
     });
+  };
+
+  public pickAQuiz = (quizID: number, questionID: number): void => {
+    console.log(quizID, questionID);
+    this.spinner.show();
   };
 
   ngOnDestroy() {
