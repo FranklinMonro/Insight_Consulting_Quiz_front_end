@@ -1,0 +1,37 @@
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+<div class="divElement" *ngIf="pickQuiz">
+	<h1>Pick a Quiz</h1>
+    <button
+		*ngFor="let quiz of quizNames"
+		type="button"
+		class="btn btn-outline-secondary me-2"
+		(click)="pickAQuizQuestion(quiz.quiz_id!, 1); getQuizCount(quiz.quiz_id!)"
+	>
+		{{ quiz.quiz_name }}
+	</button>
+</div>
+
+<div class="divElement" *ngIf="pickQuestion">
+	<h1>{{ question }}</h1>
+    <button
+		*ngFor="let answer of questionsAnswers"
+		type="button"
+		class="btn btn-outline-secondary me-2"
+		(click)="pickAQuizQuestion(quizID, quistionNumber + 1); playerAnswers(answer)"
+	>
+		{{ answer.answer }}
+	</button>
+</div>
+
+<div class="divElement" *ngIf="showScore">
+	<h1>YOUR SCORE IS</h1>
+	<H2>{{ playerCorrect }} / {{ questionCount }} </H2>
+    <button
+		type="button"
+		class="btn btn-outline-secondary me-2"
+		(click)="restartQuiz()"
+	>
+		RESTART
+	</button>
+</div>
